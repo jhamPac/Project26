@@ -9,7 +9,7 @@
 import UIKit
 
 class ImageViewController: UIViewController {
-	var owner: SelectionViewController!
+	weak var owner: SelectionViewController!
 	var image: String!
 	var animTimer: NSTimer!
 
@@ -60,6 +60,11 @@ class ImageViewController: UIViewController {
 			self.imageView.alpha = 1
 		}
 	}
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.animTimer.invalidate()
+    }
 
 	override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
 		let defaults = NSUserDefaults.standardUserDefaults()

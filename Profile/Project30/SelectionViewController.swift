@@ -12,7 +12,6 @@ import UIKit
 
 class SelectionViewController: UITableViewController {
 	var items = [String]() // this is the array that will store the filenames to load
-	var viewControllers = [UIViewController]() // create a cache of the detail view controllers for faster loading
 	var dirty = false
 
     override func viewDidLoad() {
@@ -62,26 +61,26 @@ class SelectionViewController: UITableViewController {
     }
 
 
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-		let cell = UITableViewCell(style: .Default, reuseIdentifier: "Cell")
-
+    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
+    {
+        var cell = tableView.dequeueReusableCellWithIdentifier("Cell")
+        
+        if cell == nil{
+            cell = UITableViewCell(style: .Default, reuseIdentifier: "Cell")
+        }
+        
 		// find the image for this cell, and load its thumbnail
 		let currentImage = items[indexPath.row]
 		let imageRootName = currentImage.stringByReplacingOccurrencesOfString(".jpg", withString: "")
 
 		let path = NSBundle.mainBundle().pathForResource(imageRootName, ofType: "png")!
-		cell.imageView!.image = UIImage(contentsOfFile: path)
-
-		// give the images a nice shadow to make them look a bit more dramatic
-		cell.imageView!.layer.shadowColor = UIColor.blackColor().CGColor
-		cell.imageView!.layer.shadowOpacity = 1
-		cell.imageView!.layer.shadowRadius = 10
+		cell!.imageView!.image = UIImage(contentsOfFile: path)
 
 		// each image stores how often it's been tapped
 		let defaults = NSUserDefaults.standardUserDefaults()
-		cell.textLabel!.text = "\(defaults.integerForKey(currentImage))"
+		cell!.textLabel!.text = "\(defaults.integerForKey(currentImage))"
 
-		return cell
+		return cell!
     }
 
 	override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
@@ -92,8 +91,7 @@ class SelectionViewController: UITableViewController {
 		// mark us as not needing a counter reload when we return
 		dirty = false
 
-		// add to our view controller cache and show
-		viewControllers.append(vc)
+		
 		navigationController!.pushViewController(vc, animated: true)
 	}
 }
